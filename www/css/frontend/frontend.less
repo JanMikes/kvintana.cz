@@ -1,42 +1,160 @@
-@import "../../../packagist/twbs/bootstrap/less/variables.less";
-@import "../custom/variables.less";
-@import "../custom/frontend_variables.less";
-@import "../../../packagist/twbs/bootstrap/less/mixins.less";
-@import "../custom/mixins.less";
-@import "../custom/frontend_mixins.less";
-@import "../../../packagist/twbs/bootstrap/less/normalize.less";
-@import "../../../packagist/twbs/bootstrap/less/print.less";
-@import "../../../packagist/twbs/bootstrap/less/scaffolding.less";
-@import "../../../packagist/twbs/bootstrap/less/type.less";
-@import "../../../packagist/twbs/bootstrap/less/code.less";
-@import "../../../packagist/twbs/bootstrap/less/grid.less";
-@import "../../../packagist/twbs/bootstrap/less/tables.less";
-@import "../../../packagist/twbs/bootstrap/less/forms.less";
-@import "../../../packagist/twbs/bootstrap/less/buttons.less";
-@import "../../../packagist/twbs/bootstrap/less/component-animations.less";
-@import "../../../packagist/twbs/bootstrap/less/glyphicons.less";
-@import "../../../packagist/twbs/bootstrap/less/dropdowns.less";
-@import "../../../packagist/twbs/bootstrap/less/button-groups.less";
-@import "../../../packagist/twbs/bootstrap/less/input-groups.less";
-@import "../../../packagist/twbs/bootstrap/less/navs.less";
-@import "../../../packagist/twbs/bootstrap/less/navbar.less";
-@import "../../../packagist/twbs/bootstrap/less/breadcrumbs.less";
-@import "../../../packagist/twbs/bootstrap/less/pagination.less";
-@import "../../../packagist/twbs/bootstrap/less/pager.less";
-@import "../../../packagist/twbs/bootstrap/less/labels.less";
-@import "../../../packagist/twbs/bootstrap/less/badges.less";
-@import "../../../packagist/twbs/bootstrap/less/jumbotron.less";
-@import "../../../packagist/twbs/bootstrap/less/thumbnails.less";
-@import "../../../packagist/twbs/bootstrap/less/alerts.less";
-@import "../../../packagist/twbs/bootstrap/less/progress-bars.less";
-@import "../../../packagist/twbs/bootstrap/less/media.less";
-@import "../../../packagist/twbs/bootstrap/less/list-group.less";
-@import "../../../packagist/twbs/bootstrap/less/panels.less";
-@import "../../../packagist/twbs/bootstrap/less/wells.less";
-@import "../../../packagist/twbs/bootstrap/less/close.less";
-@import "../../../packagist/twbs/bootstrap/less/modals.less";
-@import "../../../packagist/twbs/bootstrap/less/tooltip.less";
-@import "../../../packagist/twbs/bootstrap/less/popovers.less";
-@import "../../../packagist/twbs/bootstrap/less/carousel.less";
-@import "../../../packagist/twbs/bootstrap/less/utilities.less";
-@import "../../../packagist/twbs/bootstrap/less/responsive-utilities.less";
+@font-face {
+	font-family: 'BigNoodle';
+	src: url('../fonts/big_noodle_titling_cz.otf') format('opentype');
+}
+
+@orange: #ffa800;
+
+.text-shadow(@h: 1, @v: 1, @blur: 1, @color: #000){ text-shadow: @h+px @v+px @blur+px @color;filter: dropshadow(color=@color, offx=@h, offy=@v); }
+.box-shadow(@h: 1, @v: 1, @blur: 1, @spread: 0, @color: #000){ -moz-box-shadow: @h+px @v+px @blur+px @spread+px @color;-webkit-box-shadow: @h+px @v+px @blur+px @spread+px @color;box-shadow: @h+px @v+px @blur+px @spread+px @color; }
+.corners (@radius: 6px) {  border-radius: @radius;  -webkit-border-radius: @radius;  -moz-border-radius: @radius; }
+
+.font() { font-family: 'BigNoodle'; }
+
+@main-width: 1024px;
+
+#flashes {
+	position: absolute;width: 574px;left: ((@main-width - 574px)/2);top: 30px;z-index: 19;
+	> div {
+		.text-shadow (2, 2, 2, #333);.corners(7px);color: #FFF;line-height: 135%;padding: 10px 20px;margin: 1em 0;.box-shadow(0, 0, 6, 0, #555);font-weight: bold;font-size: 18px;position: relative;background: linear-gradient(to bottom, #BACDDE 0%, #F6F6F6 100%) repeat scroll 0 0 transparent;border: 1px solid #FFF;
+		&.error { background: linear-gradient(to bottom, #FF0026 0%, #ED3E3B 100%) repeat scroll 0 0 transparent; }
+		&.success { background: linear-gradient(to bottom, #8AC425 0%, #E7FFAA 100%) repeat scroll 0 0 transparent; }
+	}
+}
+
+body {
+	background: url('../img/background.jpg') center top repeat #000;
+	h1, h2, h3 { .font;text-transform: uppercase; }
+	h1 { font-size: 45px;color: #FFF; }
+	h2 { font-size: 35px; }
+	.white { color: #FFF; }
+	.orange { color: @orange; }
+	.bigger { font-size: 150%; }
+	p { margin-bottom: 1em; }
+}
+
+#header {
+	height: 201px;background: url('../img/header-background.png') left top repeat-x;
+	> .container { width: 918px;position: relative; }
+	img { margin: 45px 0 0 25px; }
+
+	.title {
+		.font();
+		color: #fff;
+		font-size: 30px;
+		position: absolute;
+		left: 37px;
+		top: 25px;
+	}
+
+	.logo {
+		margin-top: 60px;
+	}
+
+	#menu {
+		float: right;margin: 100px 0 0 0;
+		li {
+			float: left;margin: 0 0 0 20px;
+			position: relative;
+			&.active a { border-bottom: 1px solid @orange;color: @orange; }
+			a {
+				font-family: 'BigNoodle';font-size: 30px;background: transparent;color: #90744a;padding: 0 3px 5px 3px;text-align: center;
+				  -webkit-backface-visibility: hidden; /* Chrome, Safari, Opera */
+   	 				backface-visibility: hidden;
+				&:hover { color: @orange;}
+			}
+
+			&:hover ul {
+				display: block;
+			}
+		}
+		ul {
+			display: none;
+			background: rgba(0, 0, 0, .8);
+			position: absolute;
+			z-index: 300;
+			left: -10px;
+			top: 25px;
+			width: 110px;
+			padding: 10px;
+
+			li {
+				margin: 7px 0;
+				float: none;
+
+				a {
+					font-size: 22px;
+				}
+			}
+		}
+	}
+}
+
+#footer {
+	background: #000;background: rgba(0,0,0,0.6);
+	> .container { width: 918px;padding: 20px 0; }
+	ul {
+		margin: 15px auto 0 auto;
+		a { font-family: 'BigNoodle';font-size: 20px;color: #90744a; &:hover { color: @orange; } }
+		ul { display: none; }
+	}
+}
+
+#content {
+	> .container {
+		width: 918px;padding: 0 56px 37px 56px;position: relative;
+		h1 { margin-bottom: 20px; }
+		h2.indent { margin: 30px 0 15px 0; }
+		p.indent { padding-left: 20px; }
+	}
+}
+
+#background { background: url('../img/background-stul.png') center bottom no-repeat;min-height: 850px;padding-bottom: 250px; }
+
+.right-col { /* margin-top: 70px; */ }
+.img-polaroid { background: #000;background: rgba(0,0,0, 0.3); &:hover { background: @orange; } }
+.row-gallery { > div { padding-bottom: 20px; } }
+.special { .font;font-size: 18px;margin: 30px 0 40px 0; }
+.nabidka { font-size: 24px;.font;;margin-top: 1.5em; span.white { padding: 0 10px; } }
+.homepage-slider-wrap { border: 5px solid rgba(0, 0, 0, 0.3);margin: 0 auto 20px auto;width: 886px; }
+.homepage-slider {
+	width: 886px;
+	height: 282px;
+	overflow: hidden;
+}
+
+.shadow-block {
+	background: rgba(0,0,0,0.4);padding: 30px;
+	h2 {
+		border-bottom: 1px solid #DEB576;
+		&:first-child { margin-top: 0; }
+	}
+	address {
+		span.phone { background: url('../img/phone-icon.png') left center no-repeat;display: block;.font;font-size: 30px;min-height: 40px;line-height: 40px;padding: 0 0 0 40px;margin-top: 10px; }
+	}
+}
+.contact-box {
+	.font;font-size: 18px;padding: 6px;background: #000;background: rgba(0, 0, 0, 0.4);height: 374px;
+	ul {
+		li { padding: 5px 0; }
+		span.day { font-size: 30px;display: inline-block;width: 100px; }
+	}
+}
+
+.contact-addresses { 
+	margin: 30px 0 20px 0;
+	strong { .font;color: #FFF;font-size: 20px;font-weight: normal;padding-bottom: 15px;display: inline-block; }
+	img { float: left;margin: 0 20px 0 0; }
+}
+
+#book-back, #book-next { background: url(jquery-slider-theme.png) left top no-repeat;top: 400px; position:absolute; cursor: pointer; width:41px; height:51px; }
+#book-back { background-position: 0 -98px;left: -61px; }
+#book-next { background-position:  0 -151px;right: -61px; }
+
+#zoomin, #zoomout { background: #000;background: rgba(0,0,0,0.4);.corners(8px);display: inline-block;height: 46px;overflow: hidden;padding: 0;text-indent: 100%;white-space: nowrap;width: 48px;background-position: center center;background-repeat: no-repeat;margin: 0 8px; }
+#book-nav { text-align: center;margin-bottom: 10px;z-index: 1000000;position: relative; }
+#zoomin { background-image: url("zoom_in.png"); }
+#zoomout {  background-image: url("zoom_out.png"); }
+.letter { margin: 0 5px 5px 0;float: left;}
+
+.text-justify { text-align: justify; }

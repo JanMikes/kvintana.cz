@@ -1,21 +1,89 @@
 {extends "../../templates/@layout.latte"}
 
-{block robots}noindex, nofollow{/block}
+{block robots}index, follow{/block}
 {block metaKeywords}{/block}
 {block metaDescription}{/block}
 
 {block layout}
 
-	<!--[if lt IE 7]>
-		<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-	<![endif]-->
+	<div id="flashes" n:if="count($flashes)" n:inner-foreach="$flashes as $flash"><div class="{$flash->type}">{$flash->message}</div></div>
 
-	<div n:foreach="$flashes as $flash" class="flashes alert alert-{$flash->type}">
-		<a href="#" class="close" data-dismiss="alert">&times;</a>
-		{$flash->message}
+	<div id="header">
+		<div class="container">
+
+			<span class="title">Kvintána</span>
+
+			<a n:href="Homepage:"><img src="{$baseUri}/img/kvintana-logo.png" class="logo" alt="Kvintána" title="Kvintána" /></a>
+
+			<ul id="menu" class="nav" n:inner-foreach="$menuItems as $title=>$link">
+				{block #menuItem}
+				{if is_array($link)}
+				{var $active = false}
+				{foreach $link as $subTitle=>$subLink}
+					{if ($presenter->isLinkCurrent($subLink) || $presenter->isLinkCurrent($subLink . '*'))}
+						{? $active = true}
+					{/if}
+				{/foreach}
+				<li n:class="$active? active">
+					<a href="#">{$title}</a>
+					<ul class="unstyled" n:inner-foreach="$link as $subTitle=>$subLink">
+						{include #menuItem, title => $subTitle, link => $subLink}
+					</ul>
+				</li>
+				{else}
+					<li n:class="($presenter->isLinkCurrent($link) || $presenter->isLinkCurrent($link . '*'))? active"><a n:href="$link">{$title}</a></li>
+				{/if}
+			{/block}
+			</ul>
+		</div>
 	</div>
 
-	{block content}{/block}
+	<div id="content">
+		<div class="container">
+			{block content}
+			{block slider}
+			<div class="homepage-slider-wrap">
+				<div class="homepage-slider" n:inner-for="$i=1 ; $i<=7 ; $i++">
+					<div><img src="{$baseUri}/img/slider/{$i}.jpg" alt="Slider {$i}" /></div>
+				</div>
+			</div>
+			{/block}
+
+			<div class="row-fluid">
+				<div class="span8">
+					{block text}{/block}
+				</div>
+				<div class="span4 right-col">
+					<div class="shadow-block">
+						<h2>Zavolejte nám</h2>
+						<address class="white">
+							<strong>Viktor Fiala</strong><br />
+							Provozní manažer<br />
+							<span class="phone orange">+420 737 179 811</span>
+						</address>
+
+						<h2>Aktuálně</h2>
+						<ul>
+							<li>22.8. 20:00 Hrad Starý Jičín - Jezdecká ohnivá show</li>
+							<li>23.8. Frýdlant nad Ostravicí, Náměstí - Městské slavnosti</li>
+							<li>30.8. Velké Losiny</li>
+							<li>31.8. Frýdek-Místek, Zámecká zahrada</li>
+						</ul>
+						<a n:href="KalendarAkci:">Zobrazit kalendář akcí</a>
+					</div>
+				</div>
+			</div>
+			{/block}
+		</div>
+	</div>
+	
+	<div id="footer">
+		<div class="container">
+			<ul class="inline unstyled" n:inner-foreach="$menuItems as $title=>$link">
+				{include #menuItem, title => $title, link => $link}
+			</ul>
+		</div>
+	</div>
 
 	{control ga, null}
 {/block}
