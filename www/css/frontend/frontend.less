@@ -56,12 +56,16 @@ body {
 		li {
 			float: left;margin: 0 0 0 20px;
 			position: relative;
-			&.active a { border-bottom: 1px solid @orange;color: @orange; }
+			&.active > a { border-bottom: 1px solid @orange;color: @orange; }
 			a {
 				font-family: 'BigNoodle';font-size: 30px;background: transparent;color: #90744a;padding: 0 3px 5px 3px;text-align: center;
 				  -webkit-backface-visibility: hidden; /* Chrome, Safari, Opera */
    	 				backface-visibility: hidden;
 				&:hover { color: @orange;}
+			}
+
+			li.active > a {
+				border-bottom: 0;
 			}
 
 			&:hover ul {
@@ -97,6 +101,8 @@ body {
 		margin: 15px auto 0 auto;
 		a { font-family: 'BigNoodle';font-size: 20px;color: #90744a; &:hover { color: @orange; } }
 		ul { display: none; }
+
+		li.active > a { color: @orange; }
 	}
 }
 
@@ -160,9 +166,9 @@ body {
 .text-justify { text-align: justify; }
 
 hr {
-	border: 0;
-	height: 1px;
-	background: rgba(255, 255, 255, .3);
+	border: 0 !important;
+	height: 1px !important;
+	background: rgba(255, 255, 255, .3) !important;
 }
 
 table {
