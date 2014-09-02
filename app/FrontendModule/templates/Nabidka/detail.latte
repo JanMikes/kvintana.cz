@@ -13,7 +13,7 @@
 		{var $photosCnt = $gallery->related("gallery_photo")->where("active_flag", 1)->where("del_flag", 0)->count("id")}
 		<li>
 			<h3>
-				<a n:tag-if="$photosCnt > 0" n:href="Fotogalerie:detail, $gallery->id">{$gallery->name}</a>
+				<a n:tag-if="$photosCnt > 0" n:href="detailPredstaveni, $gallery->id">{$gallery->name}</a>
 			</h3>
 		</li>
 	{/foreach}

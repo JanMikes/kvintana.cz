@@ -16,4 +16,14 @@ final class NabidkaPresenter extends BasePresenter
 			$this->redirect("default");
 		}
 	}
+
+
+	public function actionDetailPredstaveni($id)
+	{
+		$this->template->gallery = $this->galleryEntity->findActive($id);
+		
+		if (!$this->template->gallery) {
+			$this->redirect("default");
+		}
+	}
 }
