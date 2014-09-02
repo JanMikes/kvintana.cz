@@ -18,6 +18,7 @@
 {/form}
 
 {foreach $rows as $row}
+	<hr>
 	<p class="discussion-header">
 		<strong class="name">{$row->name}</strong>
 		<span class="email">{$row->email}</span>
@@ -26,5 +27,4 @@
 	<p>
 		{$row->message}
 	</p>
-	<hr>
 {/foreach}
