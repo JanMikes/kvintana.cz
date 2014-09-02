@@ -20,7 +20,7 @@
 					<a n:href="Homepage:">O nás</a>
 				</li>
 				<li n:class="$presenter->isLinkCurrent('Nabidka:*')? active">
-					<a href="">Nabídka</a>
+					<a href="#">Nabídka</a>
 					<ul class="unstyled" n:inner-foreach="$offers as $offer">
 						<li n:class="$presenter->isLinkCurrent('Nabidka:detail', array('id' => $offer->id))? active">
 							<a n:href="Nabidka:detail, $offer->id">{$offer->name}</a>
