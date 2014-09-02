@@ -8,5 +8,8 @@ namespace App\FrontendModule;
  */
 final class HomepagePresenter extends BasePresenter
 {
-
+	public function renderDefault()
+	{
+		$this->template->aboutRow = $this->aboutEntity->getLast();
+	}
 }

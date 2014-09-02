@@ -13,33 +13,32 @@
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		</button>
-		<a class="navbar-brand" n:href=":Backend:Dashboard:">ScubaSW</a>
+		<a class="navbar-brand" n:href=":Backend:Dashboard:">Kvintána</a>
 	</div>
 	<div class="navbar-collapse collapse">
 		<ul class="nav navbar-nav">
-			<li n:class="$presenter->isLinkCurrent(':Backend:Actuality:*')? active">
-				<a n:href=":Backend:Actuality:">Aktuality</a>
+			<li n:class="$presenter->isLinkCurrent(':Backend:About:*')? active">
+				<a n:href=":Backend:About:">O nás</a>
 			</li>
-			<li n:class="$presenter->isLinkCurrent(':Backend:Article:*')? active">
-				<a n:href=":Backend:Article:">Články</a>
-			</li>
-			<li n:class="$presenter->isLinkCurrent(':Backend:Statement:*')? active">
-				<a n:href=":Backend:Statement:">Zprávy</a>
+			<li n:class="$presenter->isLinkCurrent(':Backend:Offer:*')? active, dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Nabídka <span class="caret"></span></a>
+				<ul class="dropdown-menu" role="menu" n:inner-foreach="$menuOffers as $menuOffer">
+					<li n:class="$presenter->isLinkCurrent(':Backend:Offer:*', array('offerId'=>$menuOffer->id))? active">
+						<a n:href=":Backend:Offer:, $menuOffer->id">{$menuOffer->name}</a>
+					</li>
+				</ul>
 			</li>
 			<li n:class="$presenter->isLinkCurrent(':Backend:Gallery:*')? active">
-				<a n:href=":Backend:Gallery:">Galerie</a>
+				<a n:href=":Backend:Gallery:">Fotogalerie</a>
+			</li>
+			<li n:class="$presenter->isLinkCurrent(':Backend:Partner:*')? active">
+				<a n:href=":Backend:Partner:">Spolupráce</a>
 			</li>
 			<li n:class="$presenter->isLinkCurrent(':Backend:Discussion:*')? active">
-				<a n:href=":Backend:Discussion:">Diskuze</a>
+				<a n:href=":Backend:Discussion:">Vzkazník</a>
 			</li>
-			<li n:class="$presenter->isLinkCurrent(':Backend:Contact:*')? active">
-				<a n:href=":Backend:Contact:">Kontakt</a>
-			</li>
-			<li n:class="$presenter->isLinkCurrent(':Backend:Instructor:*')? active">
-				<a n:href=":Backend:Instructor:">Instruktoři</a>
-			</li>
-			<li n:class="$presenter->isLinkCurrent(':Backend:Link:*')? active">
-				<a n:href=":Backend:Link:">Odkazy</a>
+			<li n:class="$presenter->isLinkCurrent(':Backend:Calendar:*')? active">
+				<a n:href=":Backend:Calendar:">Kalendář akcí</a>
 			</li>
 		</ul>
 		<ul class="nav navbar-nav navbar-right">

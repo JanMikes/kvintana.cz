@@ -10,6 +10,17 @@ use App;
  */
 abstract class BasePresenter extends App\BasePresenter
 {
+	/** @var App\Database\Entities\OfferEntity @autowire */
+	protected $offerEntity;
+
+
+	public function beforeRender()
+	{
+		parent::beforeRender();
+		
+		$this->template->menuOffers = $this->offerEntity->findAll();
+	}
+
 	/** @return CssLoader */
 	protected function createComponentCss()
 	{

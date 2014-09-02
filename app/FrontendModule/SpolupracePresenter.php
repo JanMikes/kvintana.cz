@@ -8,5 +8,8 @@ namespace App\FrontendModule;
  */
 final class SpolupracePresenter extends BasePresenter
 {
-
+	public function renderDefault()
+	{
+		$this->template->partners = $this->partnerEntity->findActive()->order("order DESC");
+	}
 }

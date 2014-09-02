@@ -1,2 +1,12 @@
 {block text}
 <h1 n:block=title>Spolupráce</h1>
+
+
+{foreach $partners as $partner}
+	<h3>{$partner->name}</h3>
+	<p><small><a href="{$partner->url}">{$partner->url}</a></small></p>
+	<p>{$partner->text}</p>
+
+	{sep}<hr>{/sep}
+
+{/foreach}

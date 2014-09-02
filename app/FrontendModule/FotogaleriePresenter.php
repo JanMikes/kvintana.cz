@@ -8,5 +8,18 @@ namespace App\FrontendModule;
  */
 final class FotogaleriePresenter extends BasePresenter
 {
+	public function renderDefault()
+	{
+		$this->template->galleries = $this->galleryEntity->findActive()->order("order DESC");
+	}
 
+
+	public function actionDetail($id)
+	{
+		$this->template->gallery = $this->galleryEntity->findActive($id);
+		
+		if (!$this->template->gallery) {
+			$this->redirect("default");
+		}
+	}
 }

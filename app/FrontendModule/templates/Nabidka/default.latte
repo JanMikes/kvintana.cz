@@ -1,0 +1,12 @@
+{block text}
+<h1 n:block=title>Nabídka</h1>
+
+<ul>
+	{foreach $offers as $offer}
+		<li>
+			<h3>
+				<a n:href="detail, $offer->id">{$offer->name}</a>
+			</h3>
+		</li>
+	{/foreach}
+</ul>

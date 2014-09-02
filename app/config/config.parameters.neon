@@ -6,8 +6,8 @@ parameters:
 		from: j.mikes@me.com
 
 	authentication:
-		leadingSalt: 'scuba'
-		trailingSalt: 'sw'
+		leadingSalt: 'kvintana'
+		trailingSalt: 'kvintana'
 
 	database:
 		logs:

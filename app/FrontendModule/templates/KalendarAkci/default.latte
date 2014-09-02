@@ -1,2 +1,21 @@
 {block text}
 <h1 n:block=title>Kalendář akcí</h1>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Datum</th>
+			<th>Místo</th>
+			<th>Bližší info</th>
+		</tr>
+	</thead>
+	{foreach $calendar as $event}
+		<tr>
+			<td>{$event->date}</td>
+			<td>{$event->name}</td>
+			<td>{$event->text}</td>
+		</tr>
+
+		{breakIf $iterator->counter > 7}
+	{/foreach}
+</table>

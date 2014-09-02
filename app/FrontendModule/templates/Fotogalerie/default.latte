@@ -1,2 +1,13 @@
 {block text}
 <h1 n:block=title>Fotogalerie</h1>
+
+<ul>
+	{foreach $galleries as $gallery}
+		{var $photosCnt = $gallery->related("gallery_photo")->where("active_flag", 1)->where("del_flag", 0)->count("id")}
+		<li n:if="$photosCnt > 0">
+			<h3>
+				<a n:href="detail, $gallery->id">{$gallery->name}</a>
+			</h3>
+		</li>
+	{/foreach}
+</ul>

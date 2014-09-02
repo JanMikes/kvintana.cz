@@ -1,2 +1,30 @@
 {block text}
 <h1 n:inner-block=title>Vzkazník</h1>
+
+{form discussionForm, style=>"padding-bottom: 30px;"}
+	{if $form->hasErrors()}
+		<ul class="errors">
+			{foreach $form->errors as $error}
+				<li>{$error}</li>
+			{/foreach}
+		</ul>
+	{/if}
+
+	<p>{label name}Jméno:{/label} {input name}</p>
+	<p>{label email}E-mail:{/label} {input email}</p>
+	<p>{label message}Vzkaz:{/label} {input message, style=>"width: 80%;"}</p>
+
+	{input send, class=>"btn btn-primary", style=>"color: #000;"}
+{/form}
+
+{foreach $rows as $row}
+	<p class="discussion-header">
+		<strong class="name">{$row->name}</strong>
+		<span class="email">{$row->email}</span>
+		<span class="date">{$row->ins_dt|date:"d.m.Y H:i"}</span>
+	</p>
+	<p>
+		{$row->message}
+	</p>
+	<hr>
+{/foreach}

@@ -1,8 +1,13 @@
 {block content}
-<h1 n:block=title>Přehled aktualit</h1>
+<h1 n:block=title>Přehled fotografií - {$gallery->name}</h1>
 
 <p class="btns">
+	{if $gallery->offer_id}
+		<a n:href="Offer:, $gallery->offer_id" class="btn btn-primary"><i class="glyphicon glyphicon-arrow-left"></i> Zpět</a>
+	{else}
+		<a n:href="Gallery:" class="btn btn-primary"><i class="glyphicon glyphicon-arrow-left"></i> Zpět</a>
+	{/if}
 	<a n:href="add" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Přidat</a>
 </p>
 
-{control actualitiesList}
+{control galleryPhotosList}

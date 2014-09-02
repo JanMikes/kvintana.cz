@@ -4,7 +4,8 @@ namespace App\Factories;
 
 use Nette,
 	App,
-	App\Database\Entities\ActualityEntity;
+	App\Database\Entities\DiscussionEntity,
+	Nette\Http\Request as HttpRequest;
 
 /**
  *  @author Jan Mikes <j.mikes@me.com>
@@ -18,43 +19,45 @@ final class ManageDiscussionFormFactory extends Nette\Object
 	/** @var App\Factories\FormFactory */
 	private $formFactory;
 
-	/** @var App\Database\Entities\ActualityEntity */
-	private $actualityEntity;
+	/** @var App\Database\Entities\DiscussionEntity */
+	private $discussionEntity;
 
 	/** @var Nette\Database\Table\ActiveRow */
 	private $row;
 
+	private $httpRequest;
+
 
 	public function __construct(
 		FormFactory $formFactory,
-		ActualityEntity $actualityEntity
+		DiscussionEntity $discussionEntity,
+		HttpRequest $httpRequest
 	) {
 		$this->formFactory = $formFactory;
-		$this->actualityEntity = $actualityEntity;
+		$this->discussionEntity = $discussionEntity;
+		$this->httpRequest = $httpRequest;
 	}
 
 
 	public function create($id)
 	{
 		if ($id) {
-			$this->row = $this->actualityEntity->find($id);
+			$this->row = $this->discussionEntity->find($id);
 		}
 
 		$form = $this->formFactory->create();
 
-		$form->addText("date", "Datum")
-			->setRequired("Datum je povinný údaj!")
-			->setAttribute("class", "dtpicker")
-			->setAttribute("placeholder", "dd.mm.rrrr")
-			->addRule($form::PATTERN, "Datum musí být ve formátu dd.mm.rrrr", "(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d");
+		
+		$form->addText("name", "Autor", 50, 50)
+			->setRequired("Jméno je povinné!");
 
-		$form->addText("name", "Nadpis", 50, 50)
-			->setRequired("Nadpis je povinný!");
+		$form->addText("email", "E-mail", 50, 50)
+			->setRequired("E-mail je povinný!")
+			->addRule($form::EMAIL, "Prosím zadejte e-mail ve správném tvaru!");
 
-		$form->addTextarea("text", "Text", 50, 4)
-			->setRequired("Text je povinný!")
-			->setAttribute("class", "ckeditor");
-
+		$form->addTextarea("message", "Text", 50, 5)
+			->setRequired("Zpráva je povinná!");
+		
 
 		$form->addSubmit("send", $this->row ? "Upravit" : "Přidat")
 			->setAttribute("class", "btn-primary")
@@ -74,11 +77,11 @@ final class ManageDiscussionFormFactory extends Nette\Object
 	{
 		$values = $form->getValues(true);
 
-		$values["date"] = Nette\DateTime::from($values["date"]);
-
 		if (!$this->row) {
 			$values["ins_process"] = __METHOD__;
-			$this->actualityEntity->insert($values);
+			$values["remote_address"] = $this->httpRequest->remoteAddress;
+			$values["remote_host"] = $this->httpRequest->remoteHost;
+			$this->discussionEntity->insert($values);
 		} else {
 			$values["upd_process"] = __METHOD__;
 			$this->row->update($values);

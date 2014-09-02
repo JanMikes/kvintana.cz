@@ -1,0 +1,13 @@
+{block content}
+<h1 n:block=title>Editace nabídky - {$offer->name}</h1>
+
+
+{control manageOfferForm}
+
+<h2>Fotogalerie nabídky {$offer->name}</h2>
+
+<p class="btns">
+	<a n:href="add" class="btn btn-primary"><i class="glyphicon glyphicon-plus"></i> Přidat</a>
+</p>
+
+{control galleriesList}

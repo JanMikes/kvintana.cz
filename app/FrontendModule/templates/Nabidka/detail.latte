@@ -1,0 +1,20 @@
+{block text}
+<h1 n:block=title>Nabídka - {$offerDetail->name}</h1>
+
+<p>
+	<a n:href="default">Zpět</a>
+</p>
+
+{$offerDetail->text|noescape}
+
+{var $galleries = $offerDetail->related("gallery")->where("active_flag", 1)->where("del_flag", 0)}
+<ul>
+	{foreach $galleries as $gallery}
+		{var $photosCnt = $gallery->related("gallery_photo")->where("active_flag", 1)->where("del_flag", 0)->count("id")}
+		<li>
+			<h3>
+				<a n:tag-if="$photosCnt > 0" n:href="Fotogalerie:detail, $gallery->id">{$gallery->name}</a>
+			</h3>
+		</li>
+	{/foreach}
+</ul>

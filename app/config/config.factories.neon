@@ -9,20 +9,26 @@ services:
 	- App\Factories\SignInFormFactory
 
 	- App\Factories\IGAFactory
-	- App\Factories\IActualitiesListFactory
+	- App\Factories\IPartnersListFactory
+	- App\Factories\ICalendarListFactory
+
+	-
+		implement: App\Factories\IGalleryPhotosListFactory
+		parameters: [galleryId]
+		arguments: [%galleryId%]
+
+	-
+		implement: App\Factories\IGalleriesListFactory
+		parameters: [offerId]
+		arguments: [%offerId%]
+
+	- App\Factories\IDiscussionListFactory
 
 	- App\Factories\ChangePasswordFormFactory
-	- App\Factories\ManageActualityFormFactory
-	- App\Factories\ManageActualityPhotoFormFactory
-	- App\Factories\ManageArticleFormFactory
-	- App\Factories\ManageArticlePhotoFormFactory
-	- App\Factories\ManageContactFormFactory
+	- App\Factories\ManageAboutFormFactory
+	- App\Factories\ManagePartnerFormFactory
 	- App\Factories\ManageGalleryFormFactory
 	- App\Factories\ManageGalleryPhotoFormFactory
+	- App\Factories\ManageCalendarFormFactory
+	- App\Factories\ManageOfferFormFactory
 	- App\Factories\ManageDiscussionFormFactory
-	- App\Factories\ManageDiscussionBanFormFactory
-	- App\Factories\ManageInstructorFormFactory
-	- App\Factories\ManageLinkFormFactory
-	- App\Factories\ManageMemberFormFactory
-	- App\Factories\ManageStatementFormFactory
-	- App\Factories\ManageStatuteFormFactory

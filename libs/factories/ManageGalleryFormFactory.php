@@ -4,7 +4,7 @@ namespace App\Factories;
 
 use Nette,
 	App,
-	App\Database\Entities\ActualityEntity;
+	App\Database\Entities\GalleryEntity;
 
 /**
  *  @author Jan Mikes <j.mikes@me.com>
@@ -18,8 +18,8 @@ final class ManageGalleryFormFactory extends Nette\Object
 	/** @var App\Factories\FormFactory */
 	private $formFactory;
 
-	/** @var App\Database\Entities\ActualityEntity */
-	private $actualityEntity;
+	/** @var App\Database\Entities\GalleryEntity */
+	private $galleryEntity;
 
 	/** @var Nette\Database\Table\ActiveRow */
 	private $row;
@@ -27,34 +27,28 @@ final class ManageGalleryFormFactory extends Nette\Object
 
 	public function __construct(
 		FormFactory $formFactory,
-		ActualityEntity $actualityEntity
+		GalleryEntity $galleryEntity
 	) {
 		$this->formFactory = $formFactory;
-		$this->actualityEntity = $actualityEntity;
+		$this->galleryEntity = $galleryEntity;
 	}
 
 
-	public function create($id)
+	public function create($offerId, $id)
 	{
 		if ($id) {
-			$this->row = $this->actualityEntity->find($id);
+			$this->row = $this->galleryEntity->find($id);
 		}
 
 		$form = $this->formFactory->create();
 
-		$form->addText("date", "Datum")
-			->setRequired("Datum je povinný údaj!")
-			->setAttribute("class", "dtpicker")
-			->setAttribute("placeholder", "dd.mm.rrrr")
-			->addRule($form::PATTERN, "Datum musí být ve formátu dd.mm.rrrr", "(0[1-9]|[12][0-9]|3[01])\.(0[1-9]|1[012])\.(19|20)\d\d");
+		$form->addHidden("offer_id", $offerId);
 
-		$form->addText("name", "Nadpis", 50, 50)
-			->setRequired("Nadpis je povinný!");
+		$form->addText("name", "Název", 50, 50)
+			->setRequired("Název je povinný!");
 
 		$form->addTextarea("text", "Text", 50, 4)
-			->setRequired("Text je povinný!")
 			->setAttribute("class", "ckeditor");
-
 
 		$form->addSubmit("send", $this->row ? "Upravit" : "Přidat")
 			->setAttribute("class", "btn-primary")
@@ -74,11 +68,13 @@ final class ManageGalleryFormFactory extends Nette\Object
 	{
 		$values = $form->getValues(true);
 
-		$values["date"] = Nette\DateTime::from($values["date"]);
+		if (!$values["offer_id"]) {
+			unset ($values["offer_id"]);
+		}
 
 		if (!$this->row) {
 			$values["ins_process"] = __METHOD__;
-			$this->actualityEntity->insert($values);
+			$this->galleryEntity->insert($values);
 		} else {
 			$values["upd_process"] = __METHOD__;
 			$this->row->update($values);

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\FrontendModule;
+ namespace App\FrontendModule;
 
 use App,
 	Nette;
@@ -11,25 +11,31 @@ use App,
  */
 abstract class BasePresenter extends App\BasePresenter
 {
+	/** @var App\Database\Entities\OfferEntity @autowire */
+	protected $offerEntity;
+
+	/** @var App\Database\Entities\DiscussionEntity @autowire */
+	protected $discussionEntity;
+
+	/** @var App\Database\Entities\CalendarEntity @autowire */
+	protected $calendarEntity;
+
+	/** @var App\Database\Entities\GalleryEntity @autowire */
+	protected $galleryEntity;
+
+	/** @var App\Database\Entities\AboutEntity @autowire */
+	protected $aboutEntity;
+
+	/** @var App\Database\Entities\PartnerEntity @autowire */
+	protected $partnerEntity;
+
+
 	protected function beforeRender()
 	{
 		parent::beforeRender();
 
-		$this->template->menuItems = array(
-			"O nás" => "Homepage:",
-			"Nabídka" => array(
-				"Představení" => "Nabidka:predstaveni",
-				"Putování" => "Nabidka:putovani",
-				"Vyjížďky" => "Nabidka:vyjizdky",
-				"Jezdecké kurzy" => "Nabidka:jezdeckeKurzy",
-				"Filmy" => "Nabidka:filmy",
-				"Přeprava koní" => "Nabidka:prepravaKoni",
-			),
-			"Fotogalerie" => "Fotogalerie:",
-			"Kontakt" => "Kontakt:",
-			"Spolupráce" => "Spoluprace:",
-			"Vzkazník" => "Diskuse:",
-		);
+		$this->template->offers = $this->offerEntity->findActive();
+		$this->template->calendar = $this->calendarEntity->findActive()->order("order DESC");
 	}
 
 

@@ -15,25 +15,30 @@
 
 			<a n:href="Homepage:"><img src="{$baseUri}/img/kvintana-logo.png" class="logo" alt="Kvintána" title="Kvintána" /></a>
 
-			<ul id="menu" class="nav" n:inner-foreach="$menuItems as $title=>$link">
-				{block #menuItem}
-				{if is_array($link)}
-				{var $active = false}
-				{foreach $link as $subTitle=>$subLink}
-					{if ($presenter->isLinkCurrent($subLink) || $presenter->isLinkCurrent($subLink . '*'))}
-						{? $active = true}
-					{/if}
-				{/foreach}
-				<li n:class="$active? active">
-					<a href="#">{$title}</a>
-					<ul class="unstyled" n:inner-foreach="$link as $subTitle=>$subLink">
-						{include #menuItem, title => $subTitle, link => $subLink}
+			<ul id="menu" class="nav">
+				<li n:class="$presenter->isLinkCurrent('Homepage:*')? active">
+					<a n:href="Homepage:">O nás</a>
+				</li>
+				<li n:class="$presenter->isLinkCurrent('Nabidka:*')? active">
+					<a href="">Nabídka</a>
+					<ul class="unstyled" n:inner-foreach="$offers as $offer">
+						<li n:class="$presenter->isLinkCurrent('Nabidka:detail', array('id' => $offer->id))? active">
+							<a n:href="Nabidka:detail, $offer->id">{$offer->name}</a>
+						</li>
 					</ul>
 				</li>
-				{else}
-					<li n:class="($presenter->isLinkCurrent($link) || $presenter->isLinkCurrent($link . '*'))? active"><a n:href="$link">{$title}</a></li>
-				{/if}
-			{/block}
+				<li n:class="$presenter->isLinkCurrent('Fotogalerie:*')? active">
+					<a n:href="Fotogalerie:">Fotogalerie</a>
+				</li>
+				<li n:class="$presenter->isLinkCurrent('Kontakt:*')? active">
+					<a n:href="Kontakt:">Kontakt</a>
+				</li>
+				<li n:class="$presenter->isLinkCurrent('Spoluprace:*')? active">
+					<a n:href="Spoluprace:">Spolupráce</a>
+				</li>
+				<li n:class="$presenter->isLinkCurrent('Diskuse:*')? active">
+					<a n:href="Diskuse:">Vzkazník</a>
+				</li>
 			</ul>
 		</div>
 	</div>
@@ -64,10 +69,10 @@
 
 						<h2>Aktuálně</h2>
 						<ul>
-							<li>22.8. 20:00 Hrad Starý Jičín - Jezdecká ohnivá show</li>
-							<li>23.8. Frýdlant nad Ostravicí, Náměstí - Městské slavnosti</li>
-							<li>30.8. Velké Losiny</li>
-							<li>31.8. Frýdek-Místek, Zámecká zahrada</li>
+							{foreach $calendar as $event}
+								<li>{$event->date} - {$event->name}</li>
+								{breakIf $iterator->counter > 7}
+							{/foreach}
 						</ul>
 						<a n:href="KalendarAkci:">Zobrazit kalendář akcí</a>
 					</div>
@@ -79,8 +84,25 @@
 	
 	<div id="footer">
 		<div class="container">
-			<ul class="inline unstyled" n:inner-foreach="$menuItems as $title=>$link">
-				{include #menuItem, title => $title, link => $link}
+			<ul class="inline unstyled">
+				<li n:class="$presenter->isLinkCurrent('Homepage:*')? active">
+					<a n:href="Homepage:">O nás</a>
+				</li>
+				<li n:class="$presenter->isLinkCurrent('Nabidka:*')? active">
+					<a n:href="Nabidka:">Nabídka</a>
+				</li>
+				<li n:class="$presenter->isLinkCurrent('Fotogalerie:*')? active">
+					<a n:href="Fotogalerie:">Fotogalerie</a>
+				</li>
+				<li n:class="$presenter->isLinkCurrent('Kontakt:*')? active">
+					<a n:href="Kontakt:">Kontakt</a>
+				</li>
+				<li n:class="$presenter->isLinkCurrent('Spoluprace:*')? active">
+					<a n:href="Spoluprace:">Spolupráce</a>
+				</li>
+				<li n:class="$presenter->isLinkCurrent('Diskuse:*')? active">
+					<a n:href="Diskuse:">Vzkazník</a>
+				</li>
 			</ul>
 		</div>
 	</div>

@@ -8,5 +8,12 @@ namespace App\FrontendModule;
  */
 final class NabidkaPresenter extends BasePresenter
 {
-
+	public function actionDetail($id)
+	{
+		$this->template->offerDetail = $this->offerEntity->findActive($id);
+		
+		if (!$this->template->offerDetail) {
+			$this->redirect("default");
+		}
+	}
 }
