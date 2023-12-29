@@ -10,9 +10,11 @@ if (getenv('NETTE_DEBUG') !== false) {
     $configurator->setDebugMode(true);
 }
 
-if (
-    isset($_SERVER['HTTPS'])
-    || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')) {
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+    $_SERVER['HTTPS'] = 'On';
+}
+
+if (isset($_SERVER['HTTPS'])) {
     Route::$defaultFlags = Route::SECURED;
 }
 

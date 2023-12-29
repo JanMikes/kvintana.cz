@@ -39,6 +39,8 @@ COPY ./.docker/apache/site.conf /etc/apache2/sites-available/000-default.conf
 COPY ./.docker/entrypoint.sh /usr/local/bin/docker-php-entrypoint
 RUN chmod +x /usr/local/bin/docker-php-entrypoint
 
+RUN a2enmod rewrite
+
 WORKDIR /app
 
 FROM dev as prod
