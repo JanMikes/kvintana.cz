@@ -14,6 +14,9 @@ chmod 777 www/webtemp
 mkdir -p temp/sessions
 chmod 777 temp/sessions
 
+mkdir -p temp/cache
+chmod 777 temp/cache
+
 mkdir -p log
 chmod 777 log
 
