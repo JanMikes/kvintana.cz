@@ -35,7 +35,7 @@ webloader:
 				- "//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"
 			files:
 				- %wwwDir%/js/jquery-1.8.3.min.js
-				- %appDir%/../packagist/nette/nette/client-side/netteForms.js
+				- %appDir%/../vendor/nette/nette/client-side/netteForms.js
 				- {files: ["*.js"], in: [%wwwDir%/js/shared, %wwwDir%/js/frontend]}
 
 		backend:
@@ -43,22 +43,35 @@ webloader:
 				- "//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"
 			files:
 				- %wwwDir%/js/jquery-1.11.0.min.js
-				- %appDir%/../packagist/twbs/bootstrap/js/transition.js
-				- %appDir%/../packagist/twbs/bootstrap/js/alert.js
-				- %appDir%/../packagist/twbs/bootstrap/js/button.js
-				- %appDir%/../packagist/twbs/bootstrap/js/carousel.js
-				- %appDir%/../packagist/twbs/bootstrap/js/collapse.js
-				- %appDir%/../packagist/twbs/bootstrap/js/dropdown.js
-				- %appDir%/../packagist/twbs/bootstrap/js/modal.js
-				- %appDir%/../packagist/twbs/bootstrap/js/scrollspy.js
-				- %appDir%/../packagist/twbs/bootstrap/js/tab.js
-				- %appDir%/../packagist/twbs/bootstrap/js/tooltip.js
-				- %appDir%/../packagist/twbs/bootstrap/js/popover.js
-				- %appDir%/../packagist/twbs/bootstrap/js/affix.js
+				- %appDir%/../vendor/twbs/bootstrap/js/transition.js
+				- %appDir%/../vendor/twbs/bootstrap/js/alert.js
+				- %appDir%/../vendor/twbs/bootstrap/js/button.js
+				- %appDir%/../vendor/twbs/bootstrap/js/carousel.js
+				- %appDir%/../vendor/twbs/bootstrap/js/collapse.js
+				- %appDir%/../vendor/twbs/bootstrap/js/dropdown.js
+				- %appDir%/../vendor/twbs/bootstrap/js/modal.js
+				- %appDir%/../vendor/twbs/bootstrap/js/scrollspy.js
+				- %appDir%/../vendor/twbs/bootstrap/js/tab.js
+				- %appDir%/../vendor/twbs/bootstrap/js/tooltip.js
+				- %appDir%/../vendor/twbs/bootstrap/js/popover.js
+				- %appDir%/../vendor/twbs/bootstrap/js/affix.js
 				- %wwwDir%/js/live-form-validation.js
 				- %wwwDir%/ckeditor/ckeditor.js
 				- %wwwDir%/ckeditor/adapters/jquery.js
 				- {files: ["*.js"], in: [%wwwDir%/js/shared, %wwwDir%/js/backend]}
+
+parameters:
+	mailer:
+		developRecipients: []
+
+	## Default values to be overriden in config.local.neon
+	database:
+		default:
+			driver: mysql
+			host: mysql
+			dbname: kvintana
+			user: root
+			password: root
 
 includes:
 	- config.parameters.neon

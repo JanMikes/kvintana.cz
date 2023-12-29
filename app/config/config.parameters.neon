@@ -8,9 +8,3 @@ parameters:
 	authentication:
 		leadingSalt: 'kvintana'
 		trailingSalt: 'kvintana'
-
-	database:
-		logs:
-			dsn: "sqlite:%appDir%/../databases/logs.db"
-			user:
-			password:

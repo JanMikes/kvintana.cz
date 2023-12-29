@@ -1,7 +1,7 @@
 services:
 	nette.userStorage:
 		setup:
-			- setNamespace("ScubaSW")
+			- setNamespace("kvintana")
 
 	wlCssFilter: WebLoader\Filter\CssUrlsFilter(%wwwDir%)
 	lessFilter: App\WebLoader\LessFilter
@@ -13,12 +13,8 @@ services:
 
 	- App\Services\TemplateHelper
 	- App\Services\Mailer(%productionMode%, %mailer.from%, %mailer.developRecipients%, ...)
-	- App\Services\VisitLogger(%productionMode%)
 
 	- App\Database\ContextPool(%database%, @cacheStorage)
-	-
-		class: App\Database\Entities\LogVisitEntity
-		setup: [$connectionName("logs")]
 
 	- App\Services\ThumbnailService
 	- App\Services\PhotoService
