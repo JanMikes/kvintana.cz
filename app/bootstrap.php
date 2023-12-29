@@ -12,6 +12,7 @@ if (getenv('NETTE_DEBUG') !== false) {
 
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
     $_SERVER['HTTPS'] = 'On';
+    $_SERVER['SERVER_PORT'] = '443';
 }
 
 if (isset($_SERVER['HTTPS'])) {
