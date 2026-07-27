@@ -140,20 +140,19 @@ def arrow(cls="btn__arrow"):
 # --------------------------------------------------------------------------
 
 FONTS = (
-    '<link rel="preconnect" href="https://fonts.googleapis.com">'
-    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
-    'family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;'
-    '1,9..144,300..700,0..100,0..1&'
-    'family=Instrument+Sans:ital,wght@0,400..700;1,400..600&display=swap">'
+    # Self-hosted (tools/build_fonts.py) — no third-party request, and the two
+    # faces above the fold can be preloaded.
+    '<link rel="preload" href="/assets/fonts/fraunces-latin-ext-normal.woff2" '
+    'as="font" type="font/woff2" crossorigin>'
+    '<link rel="preload" href="/assets/fonts/instrument-sans-latin-ext-normal.woff2" '
+    'as="font" type="font/woff2" crossorigin>'
+    '<link rel="stylesheet" href="/assets/css/fonts.css">'
 )
 
 FAVICON = (
-    '<link rel="icon" href="data:image/svg+xml,'
-    "%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E"
-    "%3Crect width='32' height='32' fill='%2314100e'/%3E"
-    "%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='20' "
-    "fill='%23e86a32' text-anchor='middle'%3EK%3C/text%3E%3C/svg%3E\">"
+    '<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">'
+    '<link rel="icon" href="/assets/favicon-32.png" sizes="32x32">'
+    '<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">'
 )
 
 
