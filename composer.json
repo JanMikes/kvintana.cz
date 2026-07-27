@@ -1,9 +1,0 @@
-{
-	"require": {
-		"nette/nette": "2.1.*",
-		"janmarek/webloader": "2.2.0",
-		"oyejorge/less.php": "~1.5",
-		"kdyby/autowired": "@dev",
-		"twbs/bootstrap": "3.1.*"
-	}
-}

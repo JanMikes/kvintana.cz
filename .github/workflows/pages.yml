@@ -1,0 +1,74 @@
+# =============================================================================
+# .github/workflows/pages.yml — build the static site and publish to GH Pages.
+# =============================================================================
+# Replaces the old release.yml (Docker image -> ghcr -> lily.srv webhook).
+# kvintana.cz is now a static site served by GitHub Pages; the Nette app it
+# used to be lives at the `legacy-nette` tag.
+#
+# tools/build.py renders every page from tools/content.py. The generated HTML is
+# gitignored on purpose — it is a build product, and committing it would mean
+# every copy edit shows up twice in the diff. So the site MUST be built here;
+# there is no "deploy from a branch" fallback that would work.
+#
+# Only the published set is uploaded: photos/original/ (77 MB of source photos,
+# the input to tools/build_images.sh) and tools/ never ship.
+# =============================================================================
+
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; don't cancel a run that is already publishing.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # No dependencies: build.py is standard library only.
+      - name: Build site
+        run: python3 tools/build.py
+
+      # Assemble exactly what gets served. Everything else in the repo is
+      # source material and stays behind.
+      - name: Stage published files
+        run: |
+          mkdir -p _site
+          cp -R assets _site/
+          cp CNAME .nojekyll robots.txt sitemap.xml index.html 404.html _site/
+          for d in o-nas nabidka predstaveni putovani vyjizdky jezdecke-kurzy \
+                   skolni-vylety filmy preprava-koni fotogalerie kontakt \
+                   spoluprace kalendar-akci; do
+            [ -d "$d" ] && cp -R "$d" _site/
+          done
+          echo "staged $(find _site -type f | wc -l) files, $(du -sh _site | cut -f1)"
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
