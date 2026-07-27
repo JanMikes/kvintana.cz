@@ -1,16 +1,20 @@
 #!/bin/bash
 # Kvintána — asset pipeline
 # Grades the original photos into the "Ember & Night" look and emits
-# responsive WebP (+ a JPG fallback) into assets/img/.
+# responsive AVIF + WebP (+ a JPG fallback) into assets/img/.
 #
-# Requires ImageMagick 7 (`brew install imagemagick`).
+# Idempotent: existing outputs are kept, only missing files are generated —
+# so adding a format (or a photo) never re-encodes the rest.
+#
+# Requires ImageMagick 7 with AVIF support (`brew install imagemagick`).
 # Usage:  sh tools/build_images.sh
-
 set -euo pipefail
 
-SRC="${SRC:-$HOME/www/kvintana/www/img/gallery}"
-OUT="$(cd "$(dirname "$0")/.." && pwd)/assets/img"
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SRC="${SRC:-$ROOT/photos/original}"
+OUT="$ROOT/assets/img"
 WIDTHS=(2000 1200 800 400)
+TMP=/tmp/kv-graded.miff
 
 mkdir -p "$OUT"
 
@@ -29,31 +33,54 @@ grade() {
     miff:-
 }
 
-emit() {
-  local src="$1" name="$2"
-  local native
-  native=$(magick identify -format '%w' "$src")
+# Grade lazily: only when this photo actually has something to emit.
+graded() {
+  [ -s "$TMP" ] || grade "$CUR" > "$TMP"
+  echo "$TMP"
+}
 
-  grade "$src" > /tmp/kv-graded.miff
+# AVIF q50 lands visually next to WebP q78 at ~60% of the bytes.
+enc() { # <width> <ext> <outfile>
+  case "$2" in
+    webp) magick "$(graded)" -resize "$1x" -quality 78 -define webp:method=6 "$3" ;;
+    avif) magick "$(graded)" -resize "$1x" -quality 50 "$3" ;;
+  esac
+}
+
+emit() {
+  local name="$2" native made=0
+  CUR="$1"
+  rm -f "$TMP"
+  native=$(magick identify -format '%w' "$CUR")
 
   for w in "${WIDTHS[@]}"; do
     # never upscale past the native resolution
     [ "$w" -gt "$native" ] && continue
-    magick /tmp/kv-graded.miff -resize "${w}x" -quality 78 -define webp:method=6 \
-      "$OUT/${name}-${w}.webp"
+    for ext in avif webp; do
+      [ -f "$OUT/${name}-${w}.${ext}" ] && continue
+      enc "$w" "$ext" "$OUT/${name}-${w}.${ext}"
+      made=$((made + 1))
+    done
   done
 
-  # smallest available width, so tiny sources still get one file
-  if ! ls "$OUT/${name}"-*.webp >/dev/null 2>&1; then
-    magick /tmp/kv-graded.miff -quality 78 "$OUT/${name}-${native}.webp"
-  fi
+  # smallest available width, so tiny sources still get one file per format
+  for ext in avif webp; do
+    if ! ls "$OUT/${name}"-*."$ext" >/dev/null 2>&1; then
+      enc "$native" "$ext" "$OUT/${name}-${native}.${ext}"
+      made=$((made + 1))
+    fi
+  done
 
   # JPG fallback at a middling width
   local fb=1200
   [ "$fb" -gt "$native" ] && fb="$native"
-  magick /tmp/kv-graded.miff -resize "${fb}x" -quality 80 "$OUT/${name}.jpg"
+  if [ ! -f "$OUT/${name}.jpg" ]; then
+    magick "$(graded)" -resize "${fb}x" -quality 80 "$OUT/${name}.jpg"
+    made=$((made + 1))
+  fi
 
-  echo "  ${name}  (native ${native}px)"
+  [ "$made" -gt 0 ] && echo "  ${name}  (native ${native}px, +${made} files)"
+  return 0
 }
 
 echo "Grading photos → $OUT"
@@ -73,5 +100,5 @@ for f in "$SRC"/*.jpg; do
   emit "$f" "g0-$(basename "$f" .jpg)"
 done
 
-rm -f /tmp/kv-graded.miff
+rm -f "$TMP"
 echo "Done. $(ls "$OUT" | wc -l | tr -d ' ') files."

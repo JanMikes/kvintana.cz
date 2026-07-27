@@ -26,7 +26,8 @@ IMG = os.path.join(ROOT, "assets", "img")
 # Image helpers
 # --------------------------------------------------------------------------
 
-_WIDTHS = {}
+_WIDTHS = {}        # name -> [widths] with a WebP file
+_AVIF = {}          # name -> [widths] with an AVIF file
 
 
 def scan_images():
@@ -34,11 +35,13 @@ def scan_images():
     if not os.path.isdir(IMG):
         sys.exit("assets/img is missing — run `sh tools/build_images.sh` first.")
     for f in os.listdir(IMG):
-        m = re.match(r"^(.+)-(\d+)\.webp$", f)
+        m = re.match(r"^(.+)-(\d+)\.(webp|avif)$", f)
         if m:
-            _WIDTHS.setdefault(m.group(1), []).append(int(m.group(2)))
-    for k in _WIDTHS:
-        _WIDTHS[k].sort()
+            table = _WIDTHS if m.group(3) == "webp" else _AVIF
+            table.setdefault(m.group(1), []).append(int(m.group(2)))
+    for table in (_WIDTHS, _AVIF):
+        for k in table:
+            table[k].sort()
 
 
 def pic(name, alt, sizes="100vw", cls="", ratio=None, eager=False, pos=None):
@@ -48,6 +51,11 @@ def pic(name, alt, sizes="100vw", cls="", ratio=None, eager=False, pos=None):
         return ('<div class="%s" style="aspect-ratio:%s;background:var(--night-card)"></div>'
                 % (cls, ratio or "4/3"))
     srcset = ", ".join("/assets/img/%s-%d.webp %dw" % (name, w, w) for w in widths)
+    avif = ""
+    if _AVIF.get(name):
+        avif = '<source type="image/avif" srcset="%s" sizes="%s">' % (
+            ", ".join("/assets/img/%s-%d.avif %dw" % (name, w, w)
+                      for w in _AVIF[name]), sizes)
     # An explicit aspect-ratio without object-fit stretches the photo — always
     # pair them. `pos` steers the crop when the subject isn't centred.
     if ratio:
@@ -57,12 +65,14 @@ def pic(name, alt, sizes="100vw", cls="", ratio=None, eager=False, pos=None):
         style = ' style="object-position:%s"' % pos if pos else ""
     return (
         '<picture>'
+        '%s'
         '<source type="image/webp" srcset="%s" sizes="%s">'
-        '<img src="/assets/img/%s.jpg" alt="%s"%s%s loading="%s" decoding="async">'
+        '<img src="/assets/img/%s.jpg" alt="%s"%s%s loading="%s"%s decoding="async">'
         '</picture>'
-    ) % (srcset, sizes, name, esc(alt),
+    ) % (avif, srcset, sizes, name, esc(alt),
          ' class="%s"' % cls if cls else "", style,
-         "eager" if eager else "lazy")
+         "eager" if eager else "lazy",
+         ' fetchpriority="high"' if eager else "")
 
 
 def img_src(name, width=800):
@@ -146,8 +156,31 @@ FONTS = (
     'as="font" type="font/woff2" crossorigin>'
     '<link rel="preload" href="/assets/fonts/instrument-sans-latin-ext-normal.woff2" '
     'as="font" type="font/woff2" crossorigin>'
-    '<link rel="stylesheet" href="/assets/css/fonts.css">'
 )
+
+
+def inline_css():
+    """fonts.css + site.css as one inline <style>.
+
+    Both stylesheets together gzip to ~12 kB; inlining them takes two
+    render-blocking requests off the critical path, which on mobile was
+    costing ~750 ms of FCP/LCP (PageSpeed). The .css files stay in
+    assets/ as the editable source — pages just don't link them.
+    """
+    global _CSS
+    if _CSS is None:
+        css = ""
+        for f in ("fonts.css", "site.css"):
+            with open(os.path.join(ROOT, "assets", "css", f), encoding="utf-8") as fh:
+                css += fh.read() + "\n"
+        css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)   # comments
+        css = re.sub(r"[ \t]+", " ", css)                 # runs of spaces
+        css = re.sub(r"\n\s*", "\n", css)                 # indentation + blank lines
+        _CSS = "<style>%s</style>" % css.strip()
+    return _CSS
+
+
+_CSS = None
 
 FAVICON = (
     '<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">'
@@ -351,7 +384,7 @@ def page(url, title, desc, body, active="", lightbox=False,
 <meta name="twitter:card" content="summary_large_image">
 {favicon}
 {fonts}
-<link rel="stylesheet" href="/assets/css/site.css">
+{css}
 <script>document.documentElement.className+=" js"</script>
 {ld}</head>
 <body>
@@ -366,7 +399,7 @@ def page(url, title, desc, body, active="", lightbox=False,
 </body>
 </html>
 """.format(title=esc(title), desc=esc(desc), favicon=FAVICON, fonts=FONTS,
-           canonical=canonical, og=og, ld=ld,
+           css=inline_css(), canonical=canonical, og=og, ld=ld,
            header=header(active), body=body, footer=footer(),
            lightbox=LIGHTBOX if lightbox else "")
 
