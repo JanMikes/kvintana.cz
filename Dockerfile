@@ -49,6 +49,8 @@ RUN mkdir /.composer \
 
 
 COPY ./.docker/apache/site.conf /etc/apache2/sites-available/000-default.conf
+COPY ./.docker/apache/mpm-limits.conf /etc/apache2/conf-available/mpm-limits.conf
+RUN a2enconf mpm-limits
 
 COPY ./.docker/entrypoint.sh /usr/local/bin/docker-php-entrypoint
 RUN chmod +x /usr/local/bin/docker-php-entrypoint
