@@ -31,9 +31,9 @@ fotogalerie.html                 13 alb + lightbox
 kontakt.html                     Kontakt + poptávkový formulář + mapa
 spoluprace.html                  Partneři
 
-assets/css/site.css              Design systém (jediný stylesheet)
+assets/css/site.css              Design systém (build.py ho inlinuje do <head>)
 assets/js/site.js                Chování — bez závislostí
-assets/img/                      Nagradované fotky, WebP ve 4 šířkách + JPG fallback
+assets/img/                      Nagradované fotky, AVIF + WebP ve 4 šířkách + JPG fallback
 
 tools/content.py                 Veškerý obsah na jednom místě
 tools/build.py                   Generátor → vypíše .html do rootu
@@ -45,7 +45,7 @@ tools/build_map.py               Statická mapa z OSM dlaždic
 
 ```bash
 python3 tools/build.py          # HTML (bez závislostí)
-sh tools/build_images.sh        # fotky, vyžaduje ImageMagick 7
+sh tools/build_images.sh        # fotky, vyžaduje ImageMagick 7 (jen chybějící soubory)
 python3 tools/build_map.py      # mapa, vyžaduje síť + ImageMagick
 ```
 
@@ -139,8 +139,15 @@ skupiny u školních výletů a rok založení spolku.
   až podle třídy `js` na `<html>`.
 - Respektuje `prefers-reduced-motion`.
 - Lightbox: klávesnice (šipky, Esc), swipe na mobilu, návrat fokusu.
-- Hlavička je vždy prosklená (blur + tmavý podklad), aby navigace držela
-  kontrast nad jakoukoliv fotkou.
+- Hlavička na desktopu je prosklená (`fixed` + blur) a leží nad fotkou, aby
+  navigace držela kontrast nad jakýmkoliv snímkem. Pod 900 px se mění na
+  neprůhledný `sticky` pruh a fotka začíná až pod ním. Důvod je iOS: Safari
+  přepočítává `fixed` prvky až na konci scroll gesta, takže při zajíždění
+  adresního řádku nebo přetažení na doraz obsah viditelně přeteče přes lištu.
+  `sticky` je součástí toku a neodlepí se. Blur přes celou šířku nad pohyblivou
+  fotkou je navíc na telefonu nejdražší operace na stránce.
+- `body` má `overflow-x: clip` (s `hidden` jako fallbackem) — na rozdíl od
+  `hidden` nevytváří scroll kontejner, takže hlavička zůstane ukotvená.
 - Mapa je statický obrázek, ne iframe — bez cizích requestů a cookies.
   Podklad je z OpenStreetMap (atribuce je proto povinná a je pod mapou),
   ale odkaz „Otevřít" míří do Google Map.

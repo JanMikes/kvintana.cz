@@ -63,6 +63,9 @@
   --measure:  62ch;
   --radius:   2px;
 
+  /* Header height — hero padding and the mobile photo offset both key off it */
+  --header-h: clamp(4.25rem, 3rem + 2.6vw, 5.5rem);
+
   --ease:     cubic-bezier(0.22, 0.61, 0.36, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -87,7 +90,11 @@ body {
   font-synthesis-weight: none;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* `clip` clips exactly like `hidden` but never creates a scroll container —
+     which is what keeps the fixed/sticky header anchored to the viewport on
+     iOS Safari. `hidden` stays as the fallback for pre-16 Safari. */
   overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body.is-locked { overflow: hidden; }
@@ -270,7 +277,7 @@ body::after {
   align-items: center;
   justify-content: space-between;
   gap: var(--gap);
-  height: clamp(4.25rem, 3rem + 2.6vw, 5.5rem);
+  height: var(--header-h);
   position: relative;
 }
 
@@ -534,6 +541,11 @@ body::after {
   isolation: isolate;
 }
 .hero__media { position: absolute; inset: 0; z-index: -2; }
+/* The <picture> wrapper is what the img sizes against — without a height here
+   the img's `height: 100%` resolves to auto, object-fit never kicks in and the
+   photo renders at its intrinsic ratio instead of covering the section. */
+.hero__media picture,
+.phero__media picture { display: block; width: 100%; height: 100%; }
 .hero__media img {
   width: 100%; height: 100%; object-fit: cover;
   object-position: center 42%;
@@ -1271,11 +1283,94 @@ body::after {
   .index__desc { display: none; }
   .index__peek { display: none; }
   .hero__scroll { display: none; }
+}
+
+/* --- Mobile chrome & heroes ------------------------------------------------
+   Below the burger breakpoint the header stops floating over the photography
+   and becomes a solid bar the page scrolls under:
+
+   - `sticky` instead of `fixed`. iOS Safari repositions fixed elements only at
+     the end of a scroll gesture, so with the URL bar collapsing (or a rubber-
+     band overscroll) the page visibly slides over and above the bar. A sticky
+     header is laid out in flow and never detaches.
+   - Opaque instead of glass. A full-width backdrop-filter recomputed against a
+     moving photo is the most expensive thing on the page on a phone, and it is
+     the blur that made the content read as "flowing through" the bar.
+   - Because the header now takes flow space, the photo starts *below* it with a
+     clean top edge instead of being cropped by it.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .header {
+    position: sticky;
+    background: var(--night);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .header.is-stuck { background: var(--night); }
+
+  /* Static grain on phones. Repainting a viewport-sized noise layer above the
+     header every 700ms is what the header stutter was riding on. */
+  body::after { animation: none; opacity: 0.05; }
+
+  /* The bar is part of the document now — the hero fills what's left of the
+     screen rather than a full 100svh that would push its own base out of view. */
+  .hero {
+    min-height: calc(100svh - var(--header-h));
+    padding-block: clamp(2rem, 6vh, 3.5rem) clamp(2rem, 5vh, 3rem);
+  }
+  /* Was 56svh with the header floating over it; the same share of the screen
+     now sits below the bar, so the photo reads bigger than it did. */
+  .phero {
+    min-height: 58svh;
+    padding-block: clamp(6rem, 20vh, 9rem) clamp(2.25rem, 5vh, 3.25rem);
+  }
+
+  /* One grade for every hero photo on mobile: darkened and desaturated a touch
+     so bone text sits on it without needing a heavier scrim. The parallax drift
+     is dropped — a 26s animation on a full-screen bitmap costs battery and adds
+     exactly the kind of compositing work that makes the header stutter. */
+  .hero__media img,
+  .phero__media img {
+    filter: brightness(0.86) saturate(0.9) contrast(1.04);
+    transform: none;
+    animation: none;
+  }
+  /* A 3:2 photo cropped into a portrait frame loses its sides, not its top and
+     bottom — on a phone the focal point that matters is the x axis. The jousting
+     pair sits left of centre in the homepage photo. */
+  .hero__media img { object-position: 24% center; }
+
+  /* Bottom-weighted ramps: the top third of the photo stays untouched, the text
+     block below sits on near-solid night. */
   .hero__scrim {
     background:
-      linear-gradient(to top, var(--night) 1%, rgba(20, 16, 14, 0.62) 34%, rgba(20, 16, 14, 0.2) 72%, rgba(20, 16, 14, 0.55) 100%),
-      radial-gradient(120% 45% at 25% 88%, rgba(20, 16, 14, 0.7), transparent 78%);
+      linear-gradient(to top,
+        var(--night) 0%,
+        rgba(20, 16, 14, 0.93) 20%,
+        rgba(20, 16, 14, 0.74) 40%,
+        rgba(20, 16, 14, 0.34) 66%,
+        rgba(20, 16, 14, 0.22) 88%,
+        rgba(20, 16, 14, 0.42) 100%);
   }
+  .phero__scrim {
+    background:
+      linear-gradient(to top,
+        var(--night) 0%,
+        rgba(20, 16, 14, 0.92) 26%,
+        rgba(20, 16, 14, 0.72) 46%,
+        rgba(20, 16, 14, 0.28) 76%,
+        rgba(20, 16, 14, 0.42) 100%);
+  }
+
+  /* Faint bone over a sunlit photo disappears — the crumbs sit highest in the
+     text block, where the scrim is weakest. */
+  .phero .crumbs {
+    color: var(--bone-mute);
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.9);
+  }
+  .phero__title { text-shadow: 0 2px 30px rgba(0, 0, 0, 0.45); }
+  .phero__lead { text-shadow: 0 1px 16px rgba(0, 0, 0, 0.55); }
 }
 
 @media (max-width: 620px) {
@@ -1310,7 +1405,8 @@ body::after {
   .hero__stat + .hero__stat { border-left: 1px solid var(--bone-hair); }
   .hero__stat b { font-size: 1.35rem; }
   .hero__stat span { font-size: 0.62rem; letter-spacing: 0.12em; line-height: 1.3; }
-  .hero { padding-block: clamp(6rem, 12vh, 8rem) 2.25rem; }
+  /* padding-block lives in the mobile-chrome block above — the header no longer
+     overlaps the hero here, so there is nothing to clear. */
   .hero__title { margin-bottom: 1rem; }
   .hero__sub { margin-bottom: 1.5rem; font-size: 1rem; }
   .spec__row { grid-template-columns: minmax(0, 1fr); gap: 0.3rem; }
