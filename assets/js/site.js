@@ -42,15 +42,18 @@
   var burger = document.querySelector('[data-burger]');
   var drawer = document.querySelector('[data-drawer]');
   if (burger && drawer) {
+    /* is-nav-open is separate from is-locked: the lightbox locks scrolling too,
+       but must not blank the page behind its own backdrop. */
     var closeDrawer = function () {
       drawer.classList.remove('is-open');
       burger.setAttribute('aria-expanded', 'false');
-      document.body.classList.remove('is-locked');
+      document.body.classList.remove('is-locked', 'is-nav-open');
     };
     burger.addEventListener('click', function () {
       var open = drawer.classList.toggle('is-open');
       burger.setAttribute('aria-expanded', String(open));
       document.body.classList.toggle('is-locked', open);
+      document.body.classList.toggle('is-nav-open', open);
     });
     drawer.addEventListener('click', function (e) {
       if (e.target.tagName === 'A') closeDrawer();

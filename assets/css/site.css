@@ -1315,9 +1315,13 @@ body::after {
   }
 
   .header {
-    position: sticky;
-    inset: var(--header-gap) auto auto auto;
-    margin: var(--header-gap) var(--shell);
+    /* `fixed`, so the island floats clear of the flow and the photography runs
+       edge to edge underneath it. left/right must be 0 rather than auto — a
+       fixed box with auto insets shrink-wraps its content instead of spanning
+       the width. */
+    position: fixed;
+    inset: var(--header-gap) 0 auto 0;
+    margin-inline: var(--shell);
     background: rgba(20, 16, 14, 0.94);
     border: 1px solid rgba(237, 227, 212, 0.10);
     border-radius: 100px;
@@ -1336,12 +1340,23 @@ body::after {
      header every 700ms is real work for no visible gain. */
   body::after { animation: none; opacity: 0.05; }
 
-  /* The island takes flow space at the top — interior plus a gap above and
-     below — so the hero fills what is left of the screen rather than a full
-     100svh that would push its own base out of view. */
+  /* The drawer is `fixed inset: 0`, so it starts at the same inset line the
+     header does and cannot cover the strip Safari paints above it — the photo
+     stayed visible over the open menu. The strip shows *page* content, so the
+     page is what has to go dark: hiding it leaves the body canvas, which is
+     already --night, showing through. `visibility` keeps the layout and the
+     scroll position intact, and taking the page out of the a11y tree while a
+     modal menu is open is correct anyway. */
+  body.is-nav-open > main,
+  body.is-nav-open > .footer { visibility: hidden; }
+
+  /* The island is out of flow now, so the hero owns the whole screen and the
+     photo starts at the very top. Its top padding is the island's clearance —
+     the content is bottom-aligned, this only stops a tall hero reaching up
+     into the bar. */
   .hero {
-    min-height: calc(100svh - var(--header-h) - var(--header-gap) * 2);
-    padding-block: clamp(2rem, 6vh, 3.5rem) clamp(2rem, 5vh, 3rem);
+    min-height: 100svh;
+    padding-block: clamp(4.75rem, 11vh, 6.5rem) clamp(2rem, 5vh, 3rem);
   }
   /* Was 56svh with the header floating over it; the same share of the screen
      now sits below the bar, so the photo reads bigger than it did. */
