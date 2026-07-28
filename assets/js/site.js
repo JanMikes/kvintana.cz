@@ -53,12 +53,7 @@
       document.body.classList.toggle('is-locked', open);
     });
     drawer.addEventListener('click', function (e) {
-      /* The header scrolls away on mobile, so the burger cannot be relied on to
-         close what it opened — the X inside the drawer has to work. */
-      if (e.target.tagName === 'A' || e.target.closest('[data-drawer-close]')) {
-        closeDrawer();
-        if (e.target.closest('[data-drawer-close]')) burger.focus();
-      }
+      if (e.target.tagName === 'A') closeDrawer();
     });
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && drawer.classList.contains('is-open')) closeDrawer();

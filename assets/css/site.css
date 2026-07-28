@@ -445,26 +445,6 @@ body::after {
   transition: opacity 0.35s var(--ease), visibility 0.35s;
 }
 .drawer.is-open { opacity: 1; visibility: visible; }
-
-/* The header scrolls away on mobile, so the burger that opened the drawer may
-   be off-screen — the drawer has to be closeable from inside. Sits where the
-   burger does, so the X lands under the thumb that just opened it. */
-.drawer__close {
-  position: absolute;
-  top: calc((var(--header-h) - 44px) / 2);
-  right: calc(var(--shell) - 10px);
-  width: 44px; height: 44px;
-  background: none; border: 0; padding: 0;
-  cursor: pointer;
-}
-.drawer__close span {
-  position: absolute;
-  left: 11px; top: 21px;
-  width: 22px; height: 1.5px;
-  background: var(--bone);
-}
-.drawer__close span:nth-child(1) { transform: rotate(45deg); }
-.drawer__close span:nth-child(2) { transform: rotate(-45deg); }
 .drawer__list { list-style: none; margin: 0; padding: 0; }
 .drawer__list > li { border-bottom: 1px solid var(--night-line); }
 .drawer__list a {
@@ -1310,49 +1290,57 @@ body::after {
 }
 
 /* --- Mobile chrome & heroes ------------------------------------------------
-   Below the burger breakpoint the header does not stick at all. It is a plain
-   bar at the top of the document that scrolls away with the page.
+   Below the burger breakpoint the header is a floating island: inset from all
+   four edges, rounded, pinned with `sticky`.
 
-   That is not a preference, it is the only thing iOS 26 leaves us. Safari sets
-   `obscuredContentInsets` for its floating Liquid Glass toolbar, which starts
-   the *layout viewport* below that toolbar while the page keeps painting,
-   unclipped, behind the glass. So any `fixed` or `sticky` bar parks on that
-   inset line with page content visibly scrolling above it — the seam reads as
-   a detached navbar. `viewport-fit=cover` does not help: Safari deliberately
-   keeps the top content inset even then. Nothing in CSS lifts the bar above
-   that line, so the fix is to not put a bar there. Content sliding under the
-   glass toolbar with no second bar to disagree with is the iOS 26 norm.
+   The shape is forced by iOS 26. Safari sets `obscuredContentInsets` for its
+   floating Liquid Glass toolbar, which starts the *layout viewport* below that
+   toolbar while the page keeps painting, unclipped, behind the glass. No
+   element can be positioned above that line — `fixed`, `sticky` and
+   `viewport-fit=cover` all park on it, and page content is always visible
+   above whatever we put there. A full-bleed bar fights that and loses: it
+   reads as a navbar that failed to reach the top edge. An island doesn't
+   claim the edge in the first place, so content passing above and behind it
+   is what a floating element is supposed to look like.
 
-   `relative`, not `static`: it keeps the containing block for .mega and the
-   z-index that puts the header over the drawer, without making it chrome-
-   adjacent in Safari's eyes.
-
-   Because the burger scrolls away with the header, the drawer carries its own
-   close button — see .drawer__close.
-
-   The bar is also opaque rather than glass here: a full-width backdrop-filter
-   recomputed against a moving photo is the most expensive thing on the page on
-   a phone. And since the header takes flow space, the photo starts below it
-   with a clean top edge instead of being cropped by it.
+   Opaque rather than glass — the user asked not to chase Safari's own
+   material, and a backdrop-filter over a moving photo is the most expensive
+   thing on the page on a phone.
    -------------------------------------------------------------------------- */
 
 @media (max-width: 900px) {
+  :root {
+    --header-h: 3.4rem;      /* island interior, not the full block */
+    --header-gap: 0.5rem;    /* breathing room on all four sides */
+  }
+
   .header {
-    position: relative;
-    background: var(--night);
+    position: sticky;
+    inset: var(--header-gap) auto auto auto;
+    margin: var(--header-gap) var(--shell);
+    background: rgba(20, 16, 14, 0.94);
+    border: 1px solid rgba(237, 227, 212, 0.10);
+    border-radius: 100px;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.5);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
-  .header.is-stuck { background: var(--night); }
+  .header.is-stuck {
+    background: rgba(20, 16, 14, 0.94);
+    border-color: rgba(237, 227, 212, 0.14);
+  }
+  /* The island supplies its own gutter — the shell's would double it. */
+  .header .shell { padding-inline: 1.15rem; max-width: none; }
 
   /* Static grain on phones. Repainting a viewport-sized noise layer above the
      header every 700ms is real work for no visible gain. */
   body::after { animation: none; opacity: 0.05; }
 
-  /* The bar is part of the document now — the hero fills what's left of the
-     screen rather than a full 100svh that would push its own base out of view. */
+  /* The island takes flow space at the top — interior plus a gap above and
+     below — so the hero fills what is left of the screen rather than a full
+     100svh that would push its own base out of view. */
   .hero {
-    min-height: calc(100svh - var(--header-h));
+    min-height: calc(100svh - var(--header-h) - var(--header-gap) * 2);
     padding-block: clamp(2rem, 6vh, 3.5rem) clamp(2rem, 5vh, 3rem);
   }
   /* Was 56svh with the header floating over it; the same share of the screen
@@ -1414,6 +1402,11 @@ body::after {
     --section: clamp(3.25rem, 2rem + 7vw, 5rem);
     --t-hero: clamp(2.6rem, 1.1rem + 8vw, 4rem);
   }
+  /* The island's inset leaves the nowrap tagline and the burger fighting over
+     ~310px — the burger loses and lands outside the pill. The wordmark carries
+     the brand on its own here, and the hero repeats the tagline anyway. */
+  .brand__sub { display: none; }
+
   .grid--2, .grid--3, .grid--4 { grid-template-columns: minmax(0, 1fr); }
   .albums { grid-template-columns: minmax(0, 1fr); }
   .gal { columns: 1; }
