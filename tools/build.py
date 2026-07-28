@@ -542,6 +542,9 @@ def build_home():
         for p in teaser_photos
     )
 
+    # The hero counts mirror content.FACTS. "20+ let zkušeností" is the one
+    # figure on this page the old site never stated — supplied by the club on
+    # 28. 7. 2026, and the datum the readme used to list as missing.
     body = """
 <section class="hero">
   <div class="hero__media">{heroimg}</div>
@@ -562,7 +565,7 @@ def build_home():
     <div class="hero__meta" data-reveal style="--d:340ms">
       <span class="hero__stat"><span>představení</span><b>6</b></span>
       <span class="hero__stat"><span>filmů</span><b>9</b></span>
-      <span class="hero__stat"><span>koní</span><b>5</b></span>
+      <span class="hero__stat"><span>zkušeností</span><b>20+ let</b></span>
     </div>
   </div>
   <a class="hero__scroll" href="#o-nas">Posunout níž</a>

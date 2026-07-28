@@ -114,9 +114,10 @@ skupiny u školních výletů a rok založení spolku.
   bránu. Obojí je na webu zobrazené tak, jak je dnes — je potřeba ujasnit,
   kde spolek reálně sídlí a odkud vyjíždí.
 - **Čísla na homepage** (6 představení, 9 filmů, 5 koní, 13 fotogalerií) jsou
-  spočítaná z obsahu stávajícího webu. Rok založení ani „X let zkušeností"
-  nikde není — spolek není ani ve veřejném spolkovém rejstříku, takže to
-  nemám z čeho ověřit. Pokud to na web chcete, musíte dodat údaj vy.
+  spočítaná z obsahu stávajícího webu. Výjimka je „20+ let zkušeností"
+  v hlavičce homepage — to na starém webu nikde nestojí a spolek není ani ve
+  veřejném spolkovém rejstříku, takže si to neumím ověřit. Údaj dodal klient
+  (28. 7. 2026) a stojí a padá s ním. Rok založení pořád chybí.
 - **Fotky Viktora a Terezy** — identifikoval je klient (`g3-51` a `g3-52`,
   původně `img/gallery/3/51.jpg` a `52.jpg`). Jsou to jediné dvě fotky
   na webu, u kterých je někdo jmenovitě označený. Stejný dvojportrét se dá
