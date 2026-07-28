@@ -445,6 +445,26 @@ body::after {
   transition: opacity 0.35s var(--ease), visibility 0.35s;
 }
 .drawer.is-open { opacity: 1; visibility: visible; }
+
+/* The header scrolls away on mobile, so the burger that opened the drawer may
+   be off-screen — the drawer has to be closeable from inside. Sits where the
+   burger does, so the X lands under the thumb that just opened it. */
+.drawer__close {
+  position: absolute;
+  top: calc((var(--header-h) - 44px) / 2);
+  right: calc(var(--shell) - 10px);
+  width: 44px; height: 44px;
+  background: none; border: 0; padding: 0;
+  cursor: pointer;
+}
+.drawer__close span {
+  position: absolute;
+  left: 11px; top: 21px;
+  width: 22px; height: 1.5px;
+  background: var(--bone);
+}
+.drawer__close span:nth-child(1) { transform: rotate(45deg); }
+.drawer__close span:nth-child(2) { transform: rotate(-45deg); }
 .drawer__list { list-style: none; margin: 0; padding: 0; }
 .drawer__list > li { border-bottom: 1px solid var(--night-line); }
 .drawer__list a {
@@ -1290,53 +1310,43 @@ body::after {
 }
 
 /* --- Mobile chrome & heroes ------------------------------------------------
-   Below the burger breakpoint the header stops floating over the photography
-   and becomes a solid bar the page scrolls under:
+   Below the burger breakpoint the header does not stick at all. It is a plain
+   bar at the top of the document that scrolls away with the page.
 
-   - `sticky` instead of `fixed`. iOS Safari repositions fixed elements only at
-     the end of a scroll gesture, so with the URL bar collapsing (or a rubber-
-     band overscroll) the page visibly slides over and above the bar. A sticky
-     header is laid out in flow and never detaches.
-   - Opaque instead of glass. A full-width backdrop-filter recomputed against a
-     moving photo is the most expensive thing on the page on a phone, and it is
-     the blur that made the content read as "flowing through" the bar.
-   - Because the header now takes flow space, the photo starts *below* it with a
-     clean top edge instead of being cropped by it.
+   That is not a preference, it is the only thing iOS 26 leaves us. Safari sets
+   `obscuredContentInsets` for its floating Liquid Glass toolbar, which starts
+   the *layout viewport* below that toolbar while the page keeps painting,
+   unclipped, behind the glass. So any `fixed` or `sticky` bar parks on that
+   inset line with page content visibly scrolling above it — the seam reads as
+   a detached navbar. `viewport-fit=cover` does not help: Safari deliberately
+   keeps the top content inset even then. Nothing in CSS lifts the bar above
+   that line, so the fix is to not put a bar there. Content sliding under the
+   glass toolbar with no second bar to disagree with is the iOS 26 norm.
+
+   `relative`, not `static`: it keeps the containing block for .mega and the
+   z-index that puts the header over the drawer, without making it chrome-
+   adjacent in Safari's eyes.
+
+   Because the burger scrolls away with the header, the drawer carries its own
+   close button — see .drawer__close.
+
+   The bar is also opaque rather than glass here: a full-width backdrop-filter
+   recomputed against a moving photo is the most expensive thing on the page on
+   a phone. And since the header takes flow space, the photo starts below it
+   with a clean top edge instead of being cropped by it.
    -------------------------------------------------------------------------- */
 
 @media (max-width: 900px) {
   .header {
-    position: sticky;
+    position: relative;
     background: var(--night);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
   .header.is-stuck { background: var(--night); }
 
-  /* Night band carried above the bar, off-screen in a browser that positions
-     the header correctly.
-
-     Safari 26 misplaces `fixed` and `sticky` elements: it grows the visual
-     viewport upward when its floating toolbar collapses, paints page content
-     into the strip that opens up, and leaves the header parked ~90px lower.
-     It is a platform bug — LinkedIn, Mastodon and others hit it, and there is
-     no CSS that puts the header back. What we can control is what shows in
-     that strip, and right now it is the hero photo, which is why the bar reads
-     as detached. This paints it --night instead, so the artifact matches the
-     tint Safari samples for the status bar and stops being visible.
-
-     Delete once Safari ships the fix; nothing else depends on it. */
-  .header::before {
-    content: "";
-    position: absolute;
-    left: 0; right: 0; bottom: 100%;
-    height: 50vh;
-    background: var(--night);
-    pointer-events: none;
-  }
-
   /* Static grain on phones. Repainting a viewport-sized noise layer above the
-     header every 700ms is what the header stutter was riding on. */
+     header every 700ms is real work for no visible gain. */
   body::after { animation: none; opacity: 0.05; }
 
   /* The bar is part of the document now — the hero fills what's left of the

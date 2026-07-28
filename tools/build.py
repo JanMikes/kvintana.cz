@@ -251,6 +251,9 @@ def header(active):
 </header>
 
 <div class="drawer" id="drawer" data-drawer>
+  <button class="drawer__close" data-drawer-close aria-label="Zavřít menu">
+    <span></span><span></span>
+  </button>
   <nav aria-label="Mobilní">
     <ul class="drawer__list">
       <li><a href="/o-nas/"><span class="numeral">01</span>O nás</a></li>

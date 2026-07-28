@@ -42,17 +42,26 @@
   var burger = document.querySelector('[data-burger]');
   var drawer = document.querySelector('[data-drawer]');
   if (burger && drawer) {
+    var closeDrawer = function () {
+      drawer.classList.remove('is-open');
+      burger.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('is-locked');
+    };
     burger.addEventListener('click', function () {
       var open = drawer.classList.toggle('is-open');
       burger.setAttribute('aria-expanded', String(open));
       document.body.classList.toggle('is-locked', open);
     });
     drawer.addEventListener('click', function (e) {
-      if (e.target.tagName === 'A') {
-        drawer.classList.remove('is-open');
-        burger.setAttribute('aria-expanded', 'false');
-        document.body.classList.remove('is-locked');
+      /* The header scrolls away on mobile, so the burger cannot be relied on to
+         close what it opened — the X inside the drawer has to work. */
+      if (e.target.tagName === 'A' || e.target.closest('[data-drawer-close]')) {
+        closeDrawer();
+        if (e.target.closest('[data-drawer-close]')) burger.focus();
       }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && drawer.classList.contains('is-open')) closeDrawer();
     });
   }
 
